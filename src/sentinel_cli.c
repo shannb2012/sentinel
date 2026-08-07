@@ -24,7 +24,7 @@ int sentinel_cli_validate_path(const char *path)
 int sentinel_cli_parse(int argc, char *argv[], const char **path_out)
 {
     if (argc > 2) {
-        printf("Only one argument is supported.\n");
+        fprintf(stderr, "Only one path argument is supported.\nUsage: sentinel <path>\n");
         return EXIT_FAILURE;
     }
 
