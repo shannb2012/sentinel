@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sentinel_cli.h"
-#include "sentinel_log.h"
 
 int main(int argc, char* argv[])
 {
