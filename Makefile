@@ -12,10 +12,19 @@ ifeq ($(OS),Windows_NT)
     EXE := .exe
     MKDIR = if not exist "$(subst /,\,$1)" mkdir "$(subst /,\,$1)"
     RMDIR = if exist "$(subst /,\,$1)" rmdir /s /q "$(subst /,\,$1)"
+    ifeq ($(PROCESSOR_ARCHITECTURE),ARM64)
+        ASAN_ARCH := aarch64
+    else
+        ASAN_ARCH := x86_64
+    endif
+    CLANG_RESOURCE_DIR := $(shell $(CC) -print-resource-dir)
+    ASAN_DLL := $(CLANG_RESOURCE_DIR)/lib/windows/clang_rt.asan_dynamic-$(ASAN_ARCH).dll
+    COPY_ASAN_DLL = if exist "$(subst /,\,$(ASAN_DLL))" copy /y "$(subst /,\,$(ASAN_DLL))" "$(subst /,\,$1)" >nul
 else
     EXE :=
     MKDIR = mkdir -p $1
     RMDIR = rm -rf $1
+    COPY_ASAN_DLL = true
 endif
 
 SRC := $(wildcard src/*.c)
@@ -39,6 +48,7 @@ release: $(RELEASE_DIR)/$(TARGET)$(EXE)
 
 $(DEBUG_DIR)/$(TARGET)$(EXE): $(DEBUG_OBJ)
 	$(CC) $(CFLAGS) $^ -o $@
+	$(call COPY_ASAN_DLL,$(DEBUG_DIR))
 
 $(RELEASE_DIR)/$(TARGET)$(EXE): $(RELEASE_OBJ)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -56,7 +66,7 @@ $(DEBUG_DIR) $(RELEASE_DIR):
 -include $(RELEASE_OBJ:.o=.d)
 
 run: debug
-	$(DEBUG_DIR)/$(TARGET)$(EXE)
+	$(DEBUG_DIR)/$(TARGET)$(EXE) $(ARGS)
 
 clean:
 	$(call RMDIR,$(BUILD_DIR))

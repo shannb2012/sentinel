@@ -38,10 +38,15 @@ void sentinel_log_write(sentinel_log_level_t level, const char *file, int line, 
     }
 
     time_t now = time(NULL);
-    struct tm *tm_now = localtime(&now);
+    struct tm tm_buf;
+#ifdef _WIN32
+    localtime_s(&tm_buf, &now);
+#else
+    localtime_r(&now, &tm_buf);
+#endif
 
     char timestamp[20];
-    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", tm_now);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &tm_buf);
 
 #ifdef DEBUG
     fprintf(stderr, "[%s] [%s] [%s:%d %s] ", timestamp, level_name(level), file, line, func);
