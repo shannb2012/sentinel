@@ -1,15 +1,22 @@
 #include <stdio.h>
-#include "sentinel_log.h"
+#include <stdlib.h>
+#include "sentinel_cli.h"
 
-int main(void)
+int main(int argc, char* argv[])
 {
     printf("Sentinel Antivirus\n");
     printf("Version 0.0.1\n");
 
-    sentinel_log_debug("Log debug");
-    sentinel_log_info("Log info");
-    sentinel_log_warn("Log warn");
-    sentinel_log_error("Log error");
+    const char *path = NULL;
+    if (sentinel_cli_parse(argc, argv, &path) != EXIT_SUCCESS) {
+        return EXIT_FAILURE;
+    }
 
-    return 0;
+    if (!sentinel_cli_validate_path(path)) {
+        printf("Invalid path: %s\n", path);
+        return EXIT_FAILURE;
+    }
+
+    printf("Path is valid\n");
+    return EXIT_SUCCESS;
 }
