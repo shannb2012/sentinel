@@ -29,7 +29,7 @@ int sentinel_cli_parse(int argc, char *argv[], const char **path_out)
     }
 
     if (argc < 2) {
-        printf("Please enter path to be scanned.\n");
+        fprintf(stderr, "Please enter path to be scanned.\n");
         return EXIT_FAILURE;
     }
 
