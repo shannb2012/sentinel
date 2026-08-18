@@ -32,15 +32,17 @@ static void digest_to_hex(const uint8_t digest[32], char hex_out[65])
 
 sentinel_scan_result_t sentinel_scan_path(const char *path)
 {
-    FILE *file;
+    FILE *file = NULL;
 #ifdef _WIN32
-    fopen_s(&file, path, "rb");
+    if (fopen_s(&file, path, "rb") != 0 || file == NULL) {
+        return SENTINEL_SCAN_ERROR;
+    }
 #else
     file = fopen(path, "rb");
-#endif
     if (file == NULL) {
         return SENTINEL_SCAN_ERROR;
     }
+#endif
 
     sha256_ctx ctx;
     sha256_init(&ctx);
