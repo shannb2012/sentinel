@@ -1,10 +1,10 @@
 # Scan Controller
 
-Status: **design draft** — no implementation yet. This document exists to reach agreement on the goal and shape of this module before writing any code, per the project's "documentation before implementation" practice.
+Status: **implemented (v1)** — this document captures the intended contract and rationale for the current Scan Controller implementation.
 
 ## Goal
 
-`main()` currently validates that its one argument is a real, readable file and stops there — it prints "Path is valid" and exits. There is no detection happening. The CLI can tell you a file *exists*; it can't tell you whether it's dangerous. The scan controller is the module that turns path validation into an actual antivirus function.
+Before this module was implemented, `main()` validated that its one argument was a real, readable file and then exited. The Scan Controller turns that validated path into an actual antivirus function.
 
 It also fills the seam [`cli-skeleton.md`](cli-skeleton.md) deliberately left open: that document defines the CLI's contract with this layer (a path in, a `SENTINEL_SCAN_CLEAN`/`INFECTED`/`ERROR` outcome out) and stubs the call, but explicitly puts "implementing actual scanning" out of its own scope. This document is that later item.
 
